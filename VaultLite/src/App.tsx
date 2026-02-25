@@ -2,8 +2,11 @@ import { useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ReviewSummary } from './features/review/ReviewSummary';
 import { ReviewSession } from './features/review/ReviewSession';
+import { DailyRecall } from './features/review/DailyRecall';
 import { VaultEditor } from './features/vault/VaultEditor';
 import { VaultList } from './features/vault/VaultList';
+import { FlowBuilder } from './features/developer/FlowBuilder';
+import { ProductionPatternForm } from './features/developer/ProductionPatternForm';
 import { useVaultStore } from './state/vaultStore';
 import { useReviewStore } from './state/reviewStore';
 
@@ -23,16 +26,19 @@ export function App() {
         <section className="space-y-4 overflow-auto pr-1">
           <VaultEditor />
           <VaultList />
+          <DailyRecall />
         </section>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 overflow-auto">
           <ReviewSummary />
+          <FlowBuilder />
+          <ProductionPatternForm />
           <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="font-medium">Phase 3 in progress</h3>
+            <h3 className="font-medium">Phase 4 complete</h3>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>Flashcard generation from vault items</li>
-              <li>Due-card queue + full-screen review mode</li>
-              <li>Again/Hard/Good/Easy ratings wired to SM-2</li>
+              <li>Daily recall training with typed answers + similarity score</li>
+              <li>Flow builder saving node/edge JSON to local DB</li>
+              <li>Production pattern tracker with advanced fields</li>
             </ul>
           </section>
         </aside>

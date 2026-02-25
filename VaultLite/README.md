@@ -15,6 +15,9 @@ Offline-first technical knowledge OS for Windows desktop.
 - FTS5 sync triggers for create/update/delete/tag changes
 - Vault CRUD baseline (create/list/search) with knowledge-type-aware editor
 - Tauri SQLite wiring + migration bootstrap (`data/vault.db`)
+- Review engine: due queue + full-screen SM-2 rating flow
+- Daily Recall mode with typed answer + local similarity scoring
+- Developer mode: flow builder (JSON) + production pattern tracker
 - SM-2 scheduling engine (Anki style)
 - Unit tests for SM-2, search query builder, import/export restore plan
 
