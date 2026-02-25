@@ -20,6 +20,7 @@ Offline-first technical knowledge OS for Windows desktop.
 - Developer mode: flow builder (JSON) + production pattern tracker
 - Analytics panel: retention rate, review streak, mastery heatmap, difficult topics
 - Optional vault lock: password + inactivity auto-lock (local storage config)
+- Import/Export panel: ZIP backup and full restore with FTS rebuild
 - SM-2 scheduling engine (Anki style)
 - Unit tests for SM-2, search query builder, import/export restore plan
 

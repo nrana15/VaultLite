@@ -9,6 +9,7 @@ import { FlowBuilder } from './features/developer/FlowBuilder';
 import { ProductionPatternForm } from './features/developer/ProductionPatternForm';
 import { AnalyticsPanel } from './features/analytics/AnalyticsPanel';
 import { VaultLock } from './features/settings/VaultLock';
+import { ImportExportPanel } from './features/settings/ImportExportPanel';
 import { useVaultStore } from './state/vaultStore';
 import { useReviewStore } from './state/reviewStore';
 
@@ -37,12 +38,13 @@ export function App() {
           <FlowBuilder />
           <ProductionPatternForm />
           <VaultLock />
+          <ImportExportPanel />
           <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="font-medium">Phase 5 complete</h3>
+            <h3 className="font-medium">Phase 6 complete</h3>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>Analytics: retention, streak, difficult topics, review heatmap</li>
-              <li>Vault lock: password + inactivity auto-lock (local only)</li>
-              <li>Security helper service integrated for local credential checks</li>
+              <li>ZIP export with vault/flashcard/pattern/flow datasets</li>
+              <li>Full restore import path with table replay</li>
+              <li>FTS index rebuild + review schedule sanity recalc after import</li>
             </ul>
           </section>
         </aside>
