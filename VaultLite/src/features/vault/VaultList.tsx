@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { useVaultStore } from '../../state/vaultStore';
 import { KnowledgeTypeBadge } from './KnowledgeTypeBadge';
+import { reviewRepository } from '../review/repository';
+import { useReviewStore } from '../../state/reviewStore';
 
 export function VaultList() {
   const items = useVaultStore((s) => s.items);
@@ -9,6 +11,7 @@ export function VaultList() {
   const loading = useVaultStore((s) => s.loading);
   const error = useVaultStore((s) => s.error);
   const setQuery = useVaultStore((s) => s.setQuery);
+  const loadReview = useReviewStore((s) => s.load);
 
   const summary = useMemo(() => {
     const conceptCount = items.filter((i) => i.knowledgeType === 'Concept').length;
@@ -55,6 +58,17 @@ export function VaultList() {
                 ))}
               </div>
             ) : null}
+            <div className="mt-3">
+              <button
+                onClick={async () => {
+                  await reviewRepository.generateFromItem(item);
+                  await loadReview();
+                }}
+                className="rounded-md border border-slate-300 px-3 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-100"
+              >
+                Generate Flashcard
+              </button>
+            </div>
           </article>
         ))}
       </div>

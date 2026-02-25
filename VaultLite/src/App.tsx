@@ -1,16 +1,20 @@
 import { useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ReviewSummary } from './features/review/ReviewSummary';
+import { ReviewSession } from './features/review/ReviewSession';
 import { VaultEditor } from './features/vault/VaultEditor';
 import { VaultList } from './features/vault/VaultList';
 import { useVaultStore } from './state/vaultStore';
+import { useReviewStore } from './state/reviewStore';
 
 export function App() {
   const load = useVaultStore((s) => s.load);
+  const loadReview = useReviewStore((s) => s.load);
 
   useEffect(() => {
     void load();
-  }, [load]);
+    void loadReview();
+  }, [load, loadReview]);
 
   return (
     <div className="flex h-screen">
@@ -24,15 +28,16 @@ export function App() {
         <aside className="space-y-4">
           <ReviewSummary />
           <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="font-medium">Phase 2 complete</h3>
+            <h3 className="font-medium">Phase 3 in progress</h3>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>Vault CRUD (create/list/search) wired</li>
-              <li>FTS5 triggers keep index synced</li>
-              <li>Knowledge-type-aware editor and badges</li>
+              <li>Flashcard generation from vault items</li>
+              <li>Due-card queue + full-screen review mode</li>
+              <li>Again/Hard/Good/Easy ratings wired to SM-2</li>
             </ul>
           </section>
         </aside>
       </main>
+      <ReviewSession />
     </div>
   );
 }
