@@ -12,6 +12,9 @@ Offline-first technical knowledge OS for Windows desktop.
 - Premium 3-pane UI scaffold
 - Domain types with required `knowledge_type`
 - Database schema + seed data for Avaloq-oriented examples
+- FTS5 sync triggers for create/update/delete/tag changes
+- Vault CRUD baseline (create/list/search) with knowledge-type-aware editor
+- Tauri SQLite wiring + migration bootstrap (`data/vault.db`)
 - SM-2 scheduling engine (Anki style)
 - Unit tests for SM-2, search query builder, import/export restore plan
 

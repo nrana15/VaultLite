@@ -92,3 +92,76 @@ CREATE TABLE IF NOT EXISTS review_events (
 
 CREATE INDEX IF NOT EXISTS idx_flashcards_next_review ON flashcards(next_review_date);
 CREATE INDEX IF NOT EXISTS idx_vault_items_knowledge_type ON vault_items(knowledge_type);
+
+CREATE TRIGGER IF NOT EXISTS vault_items_ai AFTER INSERT ON vault_items BEGIN
+  INSERT INTO vault_fts (item_id, title, content, tags, knowledge_type)
+  VALUES (
+    NEW.id,
+    NEW.title,
+    NEW.content,
+    COALESCE((
+      SELECT GROUP_CONCAT(t.name, ' ')
+      FROM item_tags it
+      JOIN tags t ON t.id = it.tag_id
+      WHERE it.item_id = NEW.id
+    ), ''),
+    NEW.knowledge_type
+  );
+END;
+
+CREATE TRIGGER IF NOT EXISTS vault_items_au AFTER UPDATE ON vault_items BEGIN
+  DELETE FROM vault_fts WHERE item_id = OLD.id;
+  INSERT INTO vault_fts (item_id, title, content, tags, knowledge_type)
+  VALUES (
+    NEW.id,
+    NEW.title,
+    NEW.content,
+    COALESCE((
+      SELECT GROUP_CONCAT(t.name, ' ')
+      FROM item_tags it
+      JOIN tags t ON t.id = it.tag_id
+      WHERE it.item_id = NEW.id
+    ), ''),
+    NEW.knowledge_type
+  );
+END;
+
+CREATE TRIGGER IF NOT EXISTS vault_items_ad AFTER DELETE ON vault_items BEGIN
+  DELETE FROM vault_fts WHERE item_id = OLD.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS item_tags_ai AFTER INSERT ON item_tags BEGIN
+  DELETE FROM vault_fts WHERE item_id = NEW.item_id;
+  INSERT INTO vault_fts (item_id, title, content, tags, knowledge_type)
+  SELECT
+    v.id,
+    v.title,
+    v.content,
+    COALESCE((
+      SELECT GROUP_CONCAT(t.name, ' ')
+      FROM item_tags it
+      JOIN tags t ON t.id = it.tag_id
+      WHERE it.item_id = v.id
+    ), ''),
+    v.knowledge_type
+  FROM vault_items v
+  WHERE v.id = NEW.item_id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS item_tags_ad AFTER DELETE ON item_tags BEGIN
+  DELETE FROM vault_fts WHERE item_id = OLD.item_id;
+  INSERT INTO vault_fts (item_id, title, content, tags, knowledge_type)
+  SELECT
+    v.id,
+    v.title,
+    v.content,
+    COALESCE((
+      SELECT GROUP_CONCAT(t.name, ' ')
+      FROM item_tags it
+      JOIN tags t ON t.id = it.tag_id
+      WHERE it.item_id = v.id
+    ), ''),
+    v.knowledge_type
+  FROM vault_items v
+  WHERE v.id = OLD.item_id;
+END;
