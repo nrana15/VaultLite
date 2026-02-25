@@ -10,6 +10,7 @@ import { ProductionPatternForm } from './features/developer/ProductionPatternFor
 import { AnalyticsPanel } from './features/analytics/AnalyticsPanel';
 import { VaultLock } from './features/settings/VaultLock';
 import { ImportExportPanel } from './features/settings/ImportExportPanel';
+import { ReadinessChecklist } from './features/settings/ReadinessChecklist';
 import { useVaultStore } from './state/vaultStore';
 import { useReviewStore } from './state/reviewStore';
 
@@ -39,12 +40,13 @@ export function App() {
           <ProductionPatternForm />
           <VaultLock />
           <ImportExportPanel />
+          <ReadinessChecklist />
           <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="font-medium">Phase 6 complete</h3>
+            <h3 className="font-medium">Phase 7 complete</h3>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-              <li>ZIP export with vault/flashcard/pattern/flow datasets</li>
-              <li>Full restore import path with table replay</li>
-              <li>FTS index rebuild + review schedule sanity recalc after import</li>
+              <li>Portable Windows packaging guide and release workflow</li>
+              <li>Production readiness checklist integrated in-app</li>
+              <li>Performance instrumentation utility added</li>
             </ul>
           </section>
         </aside>

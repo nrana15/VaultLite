@@ -21,6 +21,9 @@ Offline-first technical knowledge OS for Windows desktop.
 - Analytics panel: retention rate, review streak, mastery heatmap, difficult topics
 - Optional vault lock: password + inactivity auto-lock (local storage config)
 - Import/Export panel: ZIP backup and full restore with FTS rebuild
+- Performance instrumentation helper (`src/utils/perf.ts`)
+- In-app production readiness checklist
+- Portable packaging guide (`docs/PORTABLE_WINDOWS.md`)
 - SM-2 scheduling engine (Anki style)
 - Unit tests for SM-2, search query builder, import/export restore plan
 
