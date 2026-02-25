@@ -18,6 +18,8 @@ Offline-first technical knowledge OS for Windows desktop.
 - Review engine: due queue + full-screen SM-2 rating flow
 - Daily Recall mode with typed answer + local similarity scoring
 - Developer mode: flow builder (JSON) + production pattern tracker
+- Analytics panel: retention rate, review streak, mastery heatmap, difficult topics
+- Optional vault lock: password + inactivity auto-lock (local storage config)
 - SM-2 scheduling engine (Anki style)
 - Unit tests for SM-2, search query builder, import/export restore plan
 
