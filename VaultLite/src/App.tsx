@@ -48,8 +48,8 @@ export function App() {
           )}
 
           {activeTab === 'Vault' && vaultView === 'capture' && <VaultEditor />}
-          {(activeTab === 'Vault' || activeTab === 'Review') && <VaultList />}
-          {(activeTab === 'Vault' || activeTab === 'Review') && <DailyRecall />}
+          {((activeTab === 'Vault' && vaultView === 'library') || activeTab === 'Review') && <VaultList />}
+          {((activeTab === 'Vault' && vaultView === 'library') || activeTab === 'Review') && <DailyRecall />}
 
           {activeTab === 'Analytics' && (
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
