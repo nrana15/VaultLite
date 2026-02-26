@@ -8,7 +8,7 @@ import { VaultList } from './features/vault/VaultList';
 import { TaskTodoPanel } from './features/tasks/TaskTodoPanel';
 import { ProductionPatternForm } from './features/developer/ProductionPatternForm';
 import { AnalyticsPanel } from './features/analytics/AnalyticsPanel';
-import { VaultLock } from './features/settings/VaultLock';
+import { CredentialVault } from './features/settings/CredentialVault';
 import { ImportExportPanel } from './features/settings/ImportExportPanel';
 import { useVaultStore } from './state/vaultStore';
 import { useReviewStore } from './state/reviewStore';
@@ -70,7 +70,7 @@ export function App() {
           {(activeTab === 'Vault' || activeTab === 'Analytics') && <AnalyticsPanel />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <TaskTodoPanel />}
           {(activeTab === 'Vault' || activeTab === 'Analytics') && <ProductionPatternForm />}
-          {(activeTab === 'Vault' || activeTab === 'Settings') && <VaultLock />}
+          {(activeTab === 'Vault' || activeTab === 'Settings') && <CredentialVault />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <ImportExportPanel />}
         </aside>
       </main>
