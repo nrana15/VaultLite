@@ -39,6 +39,12 @@ export interface FlowPayload {
   edges: FlowEdge[];
 }
 
+export interface SavedFlow {
+  id: string;
+  flow: FlowPayload;
+  createdAt: string;
+}
+
 export const developerRepository = {
   async createPattern(input: ProductionPatternInput) {
     const id = uid('pattern');
@@ -63,17 +69,43 @@ export const developerRepository = {
 
   async saveFlow(flow: FlowPayload) {
     const id = uid('flow');
+    const createdAt = new Date().toISOString();
 
     if (!isTauriRuntime()) {
       const raw = localStorage.getItem(flowKey);
-      const arr = raw ? (JSON.parse(raw) as unknown[]) : [];
-      localStorage.setItem(flowKey, JSON.stringify([{ id, flow }, ...arr]));
+      const arr = raw ? (JSON.parse(raw) as SavedFlow[]) : [];
+      localStorage.setItem(flowKey, JSON.stringify([{ id, flow, createdAt }, ...arr]));
       return id;
     }
 
     await initializeDatabase();
     const db = await getDb();
-    await db.execute('INSERT INTO process_flows (id, flow_json) VALUES (?, ?)', [id, JSON.stringify(flow)]);
+    await db.execute('INSERT INTO process_flows (id, flow_json, created_at, updated_at) VALUES (?, ?, ?, ?)', [
+      id,
+      JSON.stringify(flow),
+      createdAt,
+      createdAt,
+    ]);
     return id;
+  },
+
+  async listFlows(): Promise<SavedFlow[]> {
+    if (!isTauriRuntime()) {
+      const raw = localStorage.getItem(flowKey);
+      const arr = raw ? (JSON.parse(raw) as SavedFlow[]) : [];
+      return arr;
+    }
+
+    await initializeDatabase();
+    const db = await getDb();
+    const rows = await db.select<{ id: string; flow_json: string; created_at: string }[]>(
+      'SELECT id, flow_json, created_at FROM process_flows ORDER BY created_at DESC',
+    );
+
+    return rows.map((r) => ({
+      id: r.id,
+      flow: JSON.parse(r.flow_json) as FlowPayload,
+      createdAt: r.created_at,
+    }));
   },
 };
