@@ -5,7 +5,7 @@ import { ReviewSession } from './features/review/ReviewSession';
 import { DailyRecall } from './features/review/DailyRecall';
 import { VaultEditor } from './features/vault/VaultEditor';
 import { VaultList } from './features/vault/VaultList';
-import { FlowBuilder } from './features/developer/FlowBuilder';
+import { TaskTodoPanel } from './features/tasks/TaskTodoPanel';
 import { ProductionPatternForm } from './features/developer/ProductionPatternForm';
 import { AnalyticsPanel } from './features/analytics/AnalyticsPanel';
 import { VaultLock } from './features/settings/VaultLock';
@@ -68,7 +68,7 @@ export function App() {
         <aside className="space-y-4 overflow-auto">
           {(activeTab === 'Vault' || activeTab === 'Review') && <ReviewSummary />}
           {(activeTab === 'Vault' || activeTab === 'Analytics') && <AnalyticsPanel />}
-          {(activeTab === 'Vault' || activeTab === 'Analytics') && <FlowBuilder />}
+          {(activeTab === 'Vault' || activeTab === 'Settings') && <TaskTodoPanel />}
           {(activeTab === 'Vault' || activeTab === 'Analytics') && <ProductionPatternForm />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <VaultLock />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <ImportExportPanel />}
