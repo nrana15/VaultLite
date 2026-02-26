@@ -44,7 +44,7 @@ export function VaultEditor() {
         <h3 className="text-sm font-semibold text-slate-800">New Knowledge Item</h3>
         <div className="flex gap-2">
           <button
-            onClick={() => setContent((prev) => (prev.trim() ? `${prev}\n\n${templates[knowledgeType]}` : templates[knowledgeType]))}
+            onClick={() => setContent(templates[knowledgeType])}
             className="rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50"
           >
             Use Template
