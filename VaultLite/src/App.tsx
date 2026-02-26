@@ -18,6 +18,7 @@ export function App() {
   const load = useVaultStore((s) => s.load);
   const loadReview = useReviewStore((s) => s.load);
   const [activeTab, setActiveTab] = useState<NavTab>('Vault');
+  const [vaultView, setVaultView] = useState<'capture' | 'library'>('library');
 
   useEffect(() => {
     void load();
@@ -29,13 +30,26 @@ export function App() {
       <Sidebar activeTab={activeTab} onSelect={setActiveTab} />
       <main className="grid flex-1 grid-cols-[1fr_360px] gap-6 p-6">
         <section className="space-y-4 overflow-auto pr-1">
-          {(activeTab === 'Vault' || activeTab === 'Review') && (
-            <>
-              <VaultEditor />
-              <VaultList />
-              <DailyRecall />
-            </>
+          {activeTab === 'Vault' && (
+            <div className="flex gap-2 rounded-xl border border-slate-200 bg-white p-2">
+              <button
+                onClick={() => setVaultView('library')}
+                className={`rounded-lg px-3 py-1 text-sm ${vaultView === 'library' ? 'bg-slate-900 text-white' : 'text-slate-700'}`}
+              >
+                Library
+              </button>
+              <button
+                onClick={() => setVaultView('capture')}
+                className={`rounded-lg px-3 py-1 text-sm ${vaultView === 'capture' ? 'bg-slate-900 text-white' : 'text-slate-700'}`}
+              >
+                Capture
+              </button>
+            </div>
           )}
+
+          {activeTab === 'Vault' && vaultView === 'capture' && <VaultEditor />}
+          {(activeTab === 'Vault' || activeTab === 'Review') && <VaultList />}
+          {(activeTab === 'Vault' || activeTab === 'Review') && <DailyRecall />}
 
           {activeTab === 'Analytics' && (
             <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

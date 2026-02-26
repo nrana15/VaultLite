@@ -187,6 +187,42 @@ export const vaultRepository = {
     };
   },
 
+  async togglePinned(itemId: string, pinned: boolean): Promise<void> {
+    if (!isTauriRuntime()) {
+      const items = readBrowserItems().map((item) =>
+        item.id === itemId ? { ...item, pinned, updatedAt: new Date().toISOString() } : item,
+      );
+      writeBrowserItems(items);
+      return;
+    }
+
+    await initializeDatabase();
+    const db = await getDb();
+    await db.execute('UPDATE vault_items SET pinned = ?, updated_at = ? WHERE id = ?', [
+      pinned ? 1 : 0,
+      new Date().toISOString(),
+      itemId,
+    ]);
+  },
+
+  async toggleArchived(itemId: string, archived: boolean): Promise<void> {
+    if (!isTauriRuntime()) {
+      const items = readBrowserItems().map((item) =>
+        item.id === itemId ? { ...item, archived, updatedAt: new Date().toISOString() } : item,
+      );
+      writeBrowserItems(items);
+      return;
+    }
+
+    await initializeDatabase();
+    const db = await getDb();
+    await db.execute('UPDATE vault_items SET archived = ?, updated_at = ? WHERE id = ?', [
+      archived ? 1 : 0,
+      new Date().toISOString(),
+      itemId,
+    ]);
+  },
+
   async search(query: string): Promise<VaultItem[]> {
     if (!query.trim()) return this.list();
 
