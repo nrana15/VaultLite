@@ -5,6 +5,20 @@ import { KnowledgeTypeBadge } from './KnowledgeTypeBadge';
 import { reviewRepository } from '../review/repository';
 import { useReviewStore } from '../../state/reviewStore';
 import { vaultRepository } from './repository';
+import type { KnowledgeType } from '../../types/domain';
+
+const cardAccent: Record<KnowledgeType, string> = {
+  Concept: 'border-l-indigo-500 bg-indigo-50/30',
+  Process: 'border-l-sky-500 bg-sky-50/30',
+  'SQL Query': 'border-l-emerald-500 bg-emerald-50/30',
+  Configuration: 'border-l-slate-500 bg-slate-50/60',
+  'Debug Pattern': 'border-l-amber-500 bg-amber-50/30',
+  Architecture: 'border-l-violet-500 bg-violet-50/30',
+  'Issue Resolution': 'border-l-rose-500 bg-rose-50/30',
+  'Interview Question': 'border-l-cyan-500 bg-cyan-50/30',
+  Checklist: 'border-l-lime-500 bg-lime-50/30',
+  'Production Pattern': 'border-l-orange-500 bg-orange-50/30',
+};
 
 export function VaultList() {
   const items = useVaultStore((s) => s.items);
@@ -107,7 +121,10 @@ export function VaultList() {
 
       <div className="mt-3 space-y-3">
         {visibleItems.map((item) => (
-          <article key={item.id} className="rounded-xl border border-slate-200 p-3">
+          <article
+            key={item.id}
+            className={`rounded-xl border border-slate-200 border-l-4 p-3 ${cardAccent[item.knowledgeType]}`}
+          >
             <div className="mb-2 flex items-center justify-between gap-3">
               <h4 className="font-medium text-slate-900">{item.title}</h4>
               <div className="flex items-center gap-2">
