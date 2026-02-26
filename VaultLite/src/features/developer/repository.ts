@@ -45,26 +45,78 @@ export interface SavedFlow {
   createdAt: string;
 }
 
+export interface SavedPattern extends ProductionPatternInput {
+  id: string;
+  createdAt: string;
+}
+
 export const developerRepository = {
   async createPattern(input: ProductionPatternInput) {
     const id = uid('pattern');
+    const createdAt = new Date().toISOString();
 
     if (!isTauriRuntime()) {
       const raw = localStorage.getItem(patternKey);
-      const arr = raw ? (JSON.parse(raw) as unknown[]) : [];
-      localStorage.setItem(patternKey, JSON.stringify([{ id, ...input }, ...arr]));
+      const arr = raw ? (JSON.parse(raw) as SavedPattern[]) : [];
+      localStorage.setItem(patternKey, JSON.stringify([{ id, createdAt, ...input }, ...arr]));
       return id;
     }
 
     await initializeDatabase();
     const db = await getDb();
     await db.execute(
-      `INSERT INTO production_patterns (id, problem_description, root_cause, fix, sql_used, prevention, lessons_learned)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [id, input.problemDescription, input.rootCause, input.fix, input.sqlUsed ?? '', input.prevention ?? '', input.lessonsLearned ?? ''],
+      `INSERT INTO production_patterns (id, problem_description, root_cause, fix, sql_used, prevention, lessons_learned, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        input.problemDescription,
+        input.rootCause,
+        input.fix,
+        input.sqlUsed ?? '',
+        input.prevention ?? '',
+        input.lessonsLearned ?? '',
+        createdAt,
+      ],
     );
 
     return id;
+  },
+
+  async listPatterns(): Promise<SavedPattern[]> {
+    if (!isTauriRuntime()) {
+      const raw = localStorage.getItem(patternKey);
+      return raw ? (JSON.parse(raw) as SavedPattern[]) : [];
+    }
+
+    await initializeDatabase();
+    const db = await getDb();
+    const rows = await db.select<
+      {
+        id: string;
+        problem_description: string;
+        root_cause: string;
+        fix: string;
+        sql_used: string;
+        prevention: string;
+        lessons_learned: string;
+        created_at: string;
+      }[]
+    >(
+      `SELECT id, problem_description, root_cause, fix, sql_used, prevention, lessons_learned, created_at
+       FROM production_patterns
+       ORDER BY created_at DESC`,
+    );
+
+    return rows.map((r) => ({
+      id: r.id,
+      problemDescription: r.problem_description,
+      rootCause: r.root_cause,
+      fix: r.fix,
+      sqlUsed: r.sql_used,
+      prevention: r.prevention,
+      lessonsLearned: r.lessons_learned,
+      createdAt: r.created_at,
+    }));
   },
 
   async saveFlow(flow: FlowPayload) {
