@@ -3,6 +3,32 @@ import { vaultRepository } from './repository';
 import { useVaultStore } from '../../state/vaultStore';
 import type { KnowledgeType } from '../../types/domain';
 
+const templates: Record<KnowledgeType, string> = {
+  Concept: 'Definition:\nWhen to use:\nCommon mistakes:\nExample:\n',
+  Process: 'Goal:\nPrerequisites:\nSteps:\nValidation:\nRollback:\n',
+  'SQL Query': '-- Goal:\n-- Inputs:\nSELECT ...\nFROM ...\nWHERE ...;\n-- Explain plan notes:\n',
+  Configuration: 'Service:\nEnvironment:\nConfig key:\nRecommended value:\nRisk if wrong:\n',
+  'Debug Pattern': 'Symptom:\nSignals/logs:\nHypothesis:\nHow to verify:\nFix:\n',
+  Architecture: 'Context:\nDecision:\nTradeoffs:\nAlternatives considered:\n',
+  'Issue Resolution': 'Incident summary:\nRoot cause:\nFix applied:\nValidation:\nFollow-up actions:\n',
+  'Interview Question': 'Question:\nExpected answer:\nRed flags:\nFollow-up question:\n',
+  Checklist: '- [ ] Step 1\n- [ ] Step 2\n- [ ] Verify outcome\n',
+  'Production Pattern': 'Problem:\nImpact:\nRoot cause:\nFix:\nPrevention:\n',
+};
+
+const suggestedTags: Record<KnowledgeType, string[]> = {
+  Concept: ['theory', 'core'],
+  Process: ['workflow', 'runbook'],
+  'SQL Query': ['sql', 'db'],
+  Configuration: ['config', 'env'],
+  'Debug Pattern': ['debug', 'troubleshoot'],
+  Architecture: ['design', 'system'],
+  'Issue Resolution': ['incident', 'fix'],
+  'Interview Question': ['interview', 'prep'],
+  Checklist: ['checklist', 'ops'],
+  'Production Pattern': ['production', 'postmortem'],
+};
+
 export function VaultEditor() {
   const createItem = useVaultStore((s) => s.createItem);
   const [title, setTitle] = useState('');
@@ -14,7 +40,33 @@ export function VaultEditor() {
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="text-sm font-semibold text-slate-800">New Knowledge Item</h3>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-slate-800">New Knowledge Item</h3>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setContent((prev) => (prev.trim() ? `${prev}\n\n${templates[knowledgeType]}` : templates[knowledgeType]))}
+            className="rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50"
+          >
+            Use Template
+          </button>
+          <button
+            onClick={() => {
+              const merged = new Set(
+                tags
+                  .split(',')
+                  .map((t) => t.trim())
+                  .filter(Boolean),
+              );
+              suggestedTags[knowledgeType].forEach((t) => merged.add(t));
+              setTags(Array.from(merged).join(', '));
+            }}
+            className="rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50"
+          >
+            Suggest Tags
+          </button>
+        </div>
+      </div>
+
       <div className="mt-3 space-y-3">
         <input
           value={title}
@@ -33,6 +85,7 @@ export function VaultEditor() {
             </option>
           ))}
         </select>
+        <p className="text-xs text-slate-500">Template helper active for: {knowledgeType}</p>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}

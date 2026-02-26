@@ -12,7 +12,12 @@ export function AnalyticsPanel() {
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <h3 className="text-sm font-semibold text-slate-800">Analytics</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-slate-800">Analytics</h3>
+        <button onClick={() => void load()} className="rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50">
+          Refresh
+        </button>
+      </div>
       {loading ? <p className="mt-2 text-sm text-slate-500">Loading analytics...</p> : null}
 
       <div className="mt-3 grid grid-cols-2 gap-3">
@@ -31,6 +36,16 @@ export function AnalyticsPanel() {
             </li>
           ))}
           {!snapshot.difficultTopics.length ? <li>No misses recorded yet.</li> : null}
+        </ul>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-600">How this analytics works</h4>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-600">
+          <li>Retention Rate = % of review events rated Good/Easy (rating ≥ 2).</li>
+          <li>Review Streak = consecutive days with at least one review event.</li>
+          <li>Difficult Topics = items with most “Again” ratings (rating = 0).</li>
+          <li>Heatmap = review count per day (darker = more reviews).</li>
         </ul>
       </div>
 
