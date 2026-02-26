@@ -10,7 +10,6 @@ import { ProductionPatternForm } from './features/developer/ProductionPatternFor
 import { AnalyticsPanel } from './features/analytics/AnalyticsPanel';
 import { VaultLock } from './features/settings/VaultLock';
 import { ImportExportPanel } from './features/settings/ImportExportPanel';
-import { ReadinessChecklist } from './features/settings/ReadinessChecklist';
 import { useVaultStore } from './state/vaultStore';
 import { useReviewStore } from './state/reviewStore';
 
@@ -73,17 +72,6 @@ export function App() {
           {(activeTab === 'Vault' || activeTab === 'Analytics') && <ProductionPatternForm />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <VaultLock />}
           {(activeTab === 'Vault' || activeTab === 'Settings') && <ImportExportPanel />}
-          {(activeTab === 'Vault' || activeTab === 'Settings') && <ReadinessChecklist />}
-          {activeTab === 'Vault' && (
-            <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <h3 className="font-medium">Phase 7 complete</h3>
-              <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
-                <li>Portable Windows packaging guide and release workflow</li>
-                <li>Production readiness checklist integrated in-app</li>
-                <li>Performance instrumentation utility added</li>
-              </ul>
-            </section>
-          )}
         </aside>
       </main>
       <ReviewSession />
