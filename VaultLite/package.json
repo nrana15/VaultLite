@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "tauri": "tauri",
+    "build:tauri": "tauri build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -20,6 +22,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.10.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
