@@ -66,7 +66,7 @@ namespace VaultLite
             }
 
             // Validate password
-            if (_passwordValidator != null && !_passwordValidator(password))
+            if (_passwordValidator != null && !_passwordValidator(password ?? ""))
             {
                 ShowError("Incorrect password. Try again.");
                 txtPassword.Focus();

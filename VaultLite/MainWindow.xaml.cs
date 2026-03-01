@@ -237,10 +237,8 @@ namespace VaultLite
 
         private void OnTagsKeyDown(object sender, KeyEventArgs e)
         {
-            // Hide watermark when user starts typing
-            if (e.Key == Key.Back || e.Key == Key.Delete || 
-                (Keyboard.IsKeyLocked(Key.CapsLock) ? false : true && e.Key >= Key.A && e.Key <= Key.Z) ||
-                e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key == Key.Space)
+            // Hide watermark when user starts typing (any key except Enter/Esc)
+            if (e.Key != Key.Enter && e.Key != Key.Escape)
             {
                 lblTagsWatermark.Visibility = Visibility.Collapsed;
             }
