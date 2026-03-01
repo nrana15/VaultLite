@@ -239,7 +239,7 @@ namespace VaultLite
         {
             // Hide watermark when user starts typing
             if (e.Key == Key.Back || e.Key == Key.Delete || 
-                (!Keyboard.IsKeyLocked(Key.CapsLock) && e.Key >= Key.A && e.Key <= Key.Z) ||
+                (Keyboard.IsKeyLocked(Key.CapsLock) ? false : true && e.Key >= Key.A && e.Key <= Key.Z) ||
                 e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key == Key.Space)
             {
                 lblTagsWatermark.Visibility = Visibility.Collapsed;

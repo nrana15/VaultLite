@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Data.Sqlite;
 using VaultLite.Security;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace VaultLite.Data
 {
@@ -227,7 +228,7 @@ namespace VaultLite.Data
                 .ToList();
         }
 
-        private List<Models.Note> GetNotesInternal(string? tag, bool includeArchived)
+        public List<Models.Note> GetNotesInternal(string? tag, bool includeArchived)
         {
             var notes = new List<Models.Note>();
             
@@ -251,7 +252,9 @@ namespace VaultLite.Data
                 {
                     Id = reader.GetInt32(0),
                     Title = reader.GetString(1),
-                    Content = GetDecryptedContent(_encryptionEnabled && _masterPasswordHash != null ? contentField : null),
+                    Content = _encryptionEnabled && _masterPasswordHash != null 
+                        ? GetDecryptedContent(contentField) ?? string.Empty
+                        : contentField,
                     Tags = ParseTags(reader.GetString(3)),
                     IsPinned = reader.GetBoolean(4),
                     IsArchived = reader.GetBoolean(5),
