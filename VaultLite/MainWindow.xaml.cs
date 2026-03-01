@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using VaultLite.Data;
 using VaultLite.Models;
@@ -21,17 +22,70 @@ namespace VaultLite
         {
             InitializeComponent();
             
+            // Wire up button click events
+            btnNewNote.Click += OnNewNoteClick;
+            btnPin.Click += OnPinClicked;
+            btnArchive.Click += OnArchiveClicked;
+            btnDelete.Click += OnDeleteClicked;
+            
             // Set data directory relative to executable
             var appPath = AppDomain.CurrentDomain.BaseDirectory;
             var dataPath = Path.Combine(appPath, "data");
+            var dbPath = Path.Combine(dataPath, "vault.db");
+
             if (!Directory.Exists(dataPath))
                 Directory.CreateDirectory(dataPath);
 
-            _db = new Database(dataPath);
+            // Check for encrypted database
+            bool encryptionEnabled = false;
+            
+            try
+            {
+                using var conn = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={dbPath}");
+                conn.Open();
+                
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = "SELECT COUNT(*) FROM notes WHERE is_encrypted = 1 LIMIT 1";
+                var result = cmd.ExecuteScalar();
+                
+                if (result != null && Convert.ToInt32(result) > 0)
+                    encryptionEnabled = true;
+            }
+            catch { /* No encrypted data found */ }
+
+            _db = new Database(dataPath, encryptionEnabled);
+
+            // If encryption is enabled and database exists, show lock dialog
+            if (encryptionEnabled && File.Exists(dbPath))
+            {
+                var lockDialog = new LockDialog();
+                
+                lockDialog.SetValidation(_db.ValidatePassword);
+                lockDialog.SetSuccessCallback(() => OnUnlockSuccessful());
+                lockDialog.SetCancelCallback(() => CloseVault());
+
+                // Show modal dialog
+                bool? result = lockDialog.ShowDialog();
+                
+                if (result != true)
+                    return; // User cancelled, don't show main window
+            }
             
             // Load notes and tags
             RefreshNotes();
             UpdateTagsList();
+        }
+
+        private void OnUnlockSuccessful()
+        {
+            // Password validated successfully - extract from lock dialog
+            if (Application.Current.MainWindow is LockDialog lockDlg)
+                _db.SetMasterPassword(lockDlg.MasterPassword);
+        }
+
+        private void CloseVault()
+        {
+            Application.Current.Shutdown();
         }
 
         private void RefreshNotes()
@@ -114,132 +168,6 @@ namespace VaultLite
 
         // Event Handlers
         
-        private void OnNewTagKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(txtNewTag.Text))
-            {
-                var tagToAdd = txtNewTag.Text.Trim().ToLower();
-                
-                using var conn = new Microsoft.Data.Sqlite.SqliteConnection(
-                    $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data", "vault.db")}");
-                conn.Open();
-                
-                // Check if tag already exists
-                var checkCmd = conn.CreateCommand();
-                checkCmd.CommandText = "SELECT COUNT(*) FROM notes WHERE tags LIKE @tag";
-                checkCmd.Parameters.AddWithValue("@tag", "%" + tagToAdd + "%");
-                var count = (int)checkCmd.ExecuteScalar()!;
-                
-                if (count == 0)
-                {
-                    // Create a dummy note with this tag if it doesn't exist anywhere
-                    var newNote = new Note
-                    {
-                        Title = "New Tag: " + tagToAdd,
-                        Content = "",
-                        Tags = new[] { tagToAdd },
-                        IsPinned = false,
-                        IsArchived = false,
-                        CreatedAt = DateTime.Now,
-                        UpdatedAt = DateTime.Now
-                    };
-                    _db.SaveNote(newNote);
-                    UpdateTagsList();
-                }
-                
-                txtNewTag.Text = "";
-            }
-        }
-
-        private void OnNoteSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-        {
-            if (lstNotes.SelectedItem is Note note && note != _selectedNote)
-            {
-                // Save current note before switching
-                if (_selectedNote != null)
-                    _db.SaveNote(_selectedNote);
-
-                _selectedNote = note;
-                UpdateEditor();
-            }
-        }
-
-        private void OnSearchKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-                RefreshNotes();
-        }
-
-        public MainWindow()
-        {
-            InitializeComponent();
-            
-            // Wire up button click events
-            btnNewNote.Click += OnNewNoteClick;
-            btnPin.Click += OnPinClicked;
-            btnArchive.Click += OnArchiveClicked;
-            btnDelete.Click += OnDeleteClicked;
-            
-            // Check if encryption is needed (database exists with encrypted content)
-            var appPath = AppDomain.CurrentDomain.BaseDirectory;
-            var dataPath = Path.Combine(appPath, "data");
-            var dbPath = Path.Combine(dataPath, "vault.db");
-
-            if (!Directory.Exists(dataPath))
-                Directory.CreateDirectory(dataPath);
-
-            // Check for encrypted database
-            bool encryptionEnabled = false;
-            
-            try
-            {
-                using var conn = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={dbPath}");
-                conn.Open();
-                
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT COUNT(*) FROM notes WHERE is_encrypted = 1 LIMIT 1";
-                var result = cmd.ExecuteScalar();
-                
-                if (result != null && Convert.ToInt32(result) > 0)
-                    encryptionEnabled = true;
-            }
-            catch { /* No encrypted data found */ }
-
-            _db = new Database(dataPath, encryptionEnabled);
-
-            // If encryption is enabled and database exists, show lock dialog
-            if (encryptionEnabled && File.Exists(dbPath))
-            {
-                var lockDialog = new LockDialog();
-                
-                lockDialog.SetValidation(_db.ValidatePassword);
-                lockDialog.SetSuccessCallback(() => OnUnlockSuccessful());
-                lockDialog.SetCancelCallback(() => CloseVault());
-
-                // Show modal dialog
-                bool? result = lockDialog.ShowDialog();
-                
-                if (result != true)
-                    return; // User cancelled, don't show main window
-            }
-            
-            // Load notes and tags
-            RefreshNotes();
-            UpdateTagsList();
-        }
-
-        private void OnUnlockSuccessful()
-        {
-            // Password validated successfully - extract from lock dialog
-            if (Application.Current.MainWindow is LockDialog lockDlg)
-                _db.SetMasterPassword(lockDlg.MasterPassword);
-        }
-
-        private void CloseVault()
-        {
-            Application.Current.Shutdown();
-        }
-
         private void OnNewNoteClick(object sender, RoutedEventArgs e)
         {
             _selectedNote = new Note 
@@ -351,7 +279,26 @@ namespace VaultLite
                 : Visibility.Collapsed;
         }
 
-        private void OnTagSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void OnSearchKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                RefreshNotes();
+        }
+
+        private void OnNoteSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lstNotes.SelectedItem is Note note && note != _selectedNote)
+            {
+                // Save current note before switching
+                if (_selectedNote != null)
+                    _db.SaveNote(_selectedNote);
+
+                _selectedNote = note;
+                UpdateEditor();
+            }
+        }
+
+        private void OnTagSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lstTags.SelectedItem is string tag)
             {

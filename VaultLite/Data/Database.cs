@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Sqlite;
 using VaultLite.Security;
+using System.Text;
 
 namespace VaultLite.Data
 {
@@ -81,30 +82,6 @@ namespace VaultLite.Data
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL,
                     is_encrypted INTEGER DEFAULT 1
-                );
-
-                CREATE INDEX IF NOT EXISTS idx_notes_title ON notes(title);
-                CREATE INDEX IF NOT EXISTS idx_tags ON notes(tags);
-            ";
-            command.ExecuteNonQuery();
-        }
-
-        private void Initialize()
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            connection.Open();
-            
-            var command = connection.CreateCommand();
-            command.CommandText = @"
-                CREATE TABLE IF NOT EXISTS notes (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    title TEXT NOT NULL,
-                    content TEXT NOT NULL,
-                    tags TEXT DEFAULT '',
-                    is_pinned INTEGER DEFAULT 0,
-                    is_archived INTEGER DEFAULT 0,
-                    created_at TEXT NOT NULL,
-                    updated_at TEXT NOT NULL
                 );
 
                 CREATE INDEX IF NOT EXISTS idx_notes_title ON notes(title);
