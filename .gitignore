@@ -1,0 +1,22 @@
+# Build outputs
+publish/
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test outputs
+VaultLite.Tests/bin/
+VaultLite.Tests/obj/

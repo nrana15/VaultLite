@@ -1,0 +1,15 @@
+Copyright (c) 2026 - Proprietary Software
+
+This software is provided "as is", without warranty of any kind, express or implied.
+No part of this software may be reproduced, distributed, or transmitted in any form
+or by any means, including photocopying, recording, or other electronic or mechanical
+methods, without the prior written permission of the copyright holder.
+
+For enterprise deployment and licensing inquiries, contact your organization's
+IT security team.
+
+---
+
+DISCLAIMER: This software is designed for offline, local-only use in corporate
+environments. Users are responsible for ensuring compliance with their
+organization's policies regarding data storage and encryption.

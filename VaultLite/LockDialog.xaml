@@ -1,0 +1,48 @@
+<Window x:Class="VaultLite.LockDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="VaultLite - Unlock Required" 
+        Height="350" Width="450"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5"
+        ResizeMode="NoResize">
+
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="VaultLite" FontSize="28" FontWeight="Bold" 
+                   Foreground="#333333" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        
+        <TextBlock Text="Enter Password to Unlock" FontSize="14" 
+                   Foreground="#666666" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <!-- Password Input -->
+        <Grid Grid.Row="1">
+            <TextBox x:Name="txtPassword" KeyDown="OnPasswordKeyDown"
+                     Height="40" Padding="15,0" FontSize="16"
+                     PasswordChar="•" BorderBrush="#DDDDDD" BorderThickness="1"
+                     Background="#FAFAFA"/>
+            
+            <TextBlock x:Name="lblError" Text="" Foreground="#E74C3C" 
+                       HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                       FontSize="12" Margin="0,0,0,-25" Visibility="Collapsed"/>
+        </Grid>
+
+        <!-- Unlock Button -->
+        <Button x:Name="btnUnlock" Content="Unlock Vault" Grid.Row="3" 
+                Height="45" FontSize="14" FontWeight="SemiBold" Margin="0,20,0,0"
+                Click="OnUnlockClicked" Background="#4A90D9" Foreground="White"
+                BorderThickness="0"/>
+
+        <!-- Cancel Button -->
+        <Button x:Name="btnCancel" Content="Close VaultLite (No Data)" Grid.Row="3" 
+                HorizontalAlignment="Right" Height="45" FontSize="12" Margin="10,20,0,0"
+                Click="OnCancelClicked" Background="#E8E8E8"/>
+    </Grid>
+</Window>
