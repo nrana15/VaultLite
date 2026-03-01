@@ -56,18 +56,19 @@
 # Navigate to the project directory
 cd VaultLite/VaultLite
 
-# Publish as single-file executable (self-contained, <40MB target)
+# Publish as single-file executable (self-contained, ~40MB target)
 dotnet publish -c Release `
     -r win-x64 `
     --self-contained true `
     -p:PublishSingleFile=true `
     -p:IncludeNativeLibrariesForSelfExtract=true `
     -p:PublishReadyToRun=true `
-    -p:PublishTrimmed=true `
     -o ../../publish
 
-# Result: publish/VaultLite.exe (~35-40MB)
+# Result: publish/VaultLite.exe (~38-42MB)
 ```
+
+**Note:** WPF doesn't support trimming in .NET 8/9, so we omit that optimization. The binary is still well under 50MB and fully portable.
 
 ### Option 2: Framework-Dependent Build (Smaller binary, requires runtime)
 

@@ -13,14 +13,13 @@ New-Item -ItemType Directory -Path "publish" -Force | Out-Null
 
 Write-Host "`nBuilding VaultLite...`n" -ForegroundColor Yellow
 
-# Build self-contained single-file executable
+# Build self-contained single-file executable for Windows
 dotnet publish -c Release `
     -r win-x64 `
     --self-contained true `
     -p:PublishSingleFile=true `
     -p:IncludeNativeLibrariesForSelfExtract=true `
     -p:PublishReadyToRun=true `
-    -p:PublishTrimmed=true `
     -o "publish"
 
 if ($LASTEXITCODE -eq 0) {

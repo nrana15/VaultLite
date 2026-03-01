@@ -22,7 +22,6 @@ dotnet publish -c Release \
     -p:PublishSingleFile=true \
     -p:IncludeNativeLibrariesForSelfExtract=true \
     -p:PublishReadyToRun=true \
-    -p:PublishTrimmed=true \
     -o publish
 
 if [ $? -eq 0 ]; then

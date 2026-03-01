@@ -6,14 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <RootNamespace>VaultLite</RootNamespace>
-    <ApplicationIcon>vaultlite.ico</ApplicationIcon>
     
     <!-- Single file publish settings -->
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishTrimmed>true</PublishTrimmed>
+    
+    <!-- Note: WPF does not support trimming - removed PublishTrimmed -->
+    <!-- This keeps binary size reasonable while maintaining compatibility -->
     
     <!-- Stealth: disable app telemetry -->
     <EnableWindowsTargeting>true</EnableWindowsTargeting>

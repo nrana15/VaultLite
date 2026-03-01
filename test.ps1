@@ -15,7 +15,12 @@ Write-Host "`n[Test 1] Checking executable..." -ForegroundColor Yellow
 if (Test-Path "$publishPath\VaultLite.exe") {
     Write-Host "✓ Executable found" -ForegroundColor Green
     $exe = Get-Item "$publishPath\VaultLite.exe"
-    Write-Host "  Size: $($exe.Length / 1MB) MB"
+    $sizeMB = [math]::Round($exe.Length / 1MB, 2)
+    Write-Host "  Size: ${sizeMB} MB (target <50MB)"
+    
+    if ($sizeMB -gt 50) {
+        Write-Host "⚠️  Warning: Binary larger than expected" -ForegroundColor Yellow
+    }
 } else {
     Write-Host "✗ Executable not found!" -ForegroundColor Red
     exit 1

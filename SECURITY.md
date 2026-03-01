@@ -55,9 +55,14 @@ This is verified by the build configuration which uses only local file I/O and S
 
 The project uses:
 - .NET 8 with security-hardened runtime
-- Trimmed and ready-to-run compilation (no JIT at runtime)
+- Ready-to-run (R2R) compilation for fast startup
 - Single-file publish to prevent DLL side-loading attacks
+- **No trimming** (WPF limitation in .NET 8/9, but still fully secure)
 - No NuGet package vulnerabilities (dependencies audited)
+
+### Known Limitations & Workarounds
+
+- **Trimming not supported:** WPF doesn't support IL trimming in .NET 8/9. This increases binary size (~40MB vs ~30MB with trimming), but maintains full functionality and security.
 
 ### Recommended Hardening Steps
 

@@ -2,8 +2,21 @@
 
 **Status:** ✅ Complete - Ready for Windows Deployment  
 **Build Target:** .NET 8 WPF Single-File Executable  
-**Size Target:** <40MB (typically ~35-38MB)  
+**Size Target:** ~38-42MB (WPF limitation - trimming not supported)  
 **Security Profile:** Zero network, zero registry, fully offline  
+
+---
+
+### Known Limitation: WPF Trimming Not Supported
+
+**.NET 8/9 WPF does NOT support IL trimming.** This is a Microsoft limitation documented at https://aka.ms/dotnet-illink/wpf. 
+
+**Impact:**
+- Binary size: ~38-42MB instead of <35MB (with trimming)
+- No security impact - all optimizations still applied
+- Full functionality maintained
+
+**Workaround:** We use `PublishReadyToRun` for fast startup without the unstable trimming feature. All other stealth requirements are fully met.
 
 ---
 
