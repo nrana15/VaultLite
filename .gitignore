@@ -21,5 +21,5 @@ Thumbs.db
 VaultLite.Tests/bin/
 VaultLite.Tests/obj/
 
-# CI/CD (needs workflow scope to push)
+# CI/CD (included for manual setup)
 .github/workflows/build.yml
