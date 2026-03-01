@@ -82,6 +82,7 @@ namespace VaultLite
             {
                 txtNoteTitle.Text = "";
                 txtNoteContent.Text = "";
+                lblTagsWatermark.Visibility = Visibility.Visible;
                 return;
             }
 
@@ -308,6 +309,14 @@ namespace VaultLite
 
         private void OnTagsKeyDown(object sender, KeyEventArgs e)
         {
+            // Hide watermark when user starts typing
+            if (e.Key == Key.Back || e.Key == Key.Delete || 
+                (!System.Windows.Input.Keyboard.IsKeyLocked(Key.CapsLock) && e.Key >= Key.A && e.Key <= Key.Z) ||
+                e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key == Key.Space)
+            {
+                lblTagsWatermark.Visibility = Visibility.Collapsed;
+            }
+
             // Save tags on Enter key
             if (e.Key == Key.Enter && _selectedNote != null)
             {
@@ -329,12 +338,17 @@ namespace VaultLite
 
         private void OnNoteTextChanged(object sender, RoutedEventArgs e)
         {
-            // Auto-save on content change
+            // Auto-save on content change with debounce
             if (_selectedNote != null && txtNoteContent.Text != _selectedNote.Content)
             {
                 System.Threading.Thread.Sleep(300); // Debounce
                 SaveCurrentNote();
             }
+            
+            // Show/hide watermark when typing in tags field
+            lblTagsWatermark.Visibility = string.IsNullOrEmpty(txtTagsInput.Text) 
+                ? Visibility.Visible 
+                : Visibility.Collapsed;
         }
 
         private void OnTagSelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

@@ -109,8 +109,14 @@
                     <Grid>
                         <TextBox x:Name="txtTagsInput" KeyDown="OnTagsKeyDown"
                                  FontSize="12" Padding="8,6"
-                                 Background="#FAFAFA" BorderBrush="#DDDDDD" BorderThickness="1"
-                                 Watermark="Add tags (comma separated)"/>
+                                 Background="#FAFAFA" BorderBrush="#DDDDDD" BorderThickness="1"/>
+                        
+                        <!-- Watermark placeholder -->
+                        <TextBlock Text="Add tags (comma separated)" 
+                                   Foreground="#AAAAAA" FontSize="11"
+                                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"
+                                   x:Name="lblTagsWatermark"/>
+                        
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5,0">
                             <Button x:Name="btnPin" Content="Pin" Width="60" Height="28"
                                     Click="OnPinClicked" FontSize="11" Background="#E8E8E8"/>

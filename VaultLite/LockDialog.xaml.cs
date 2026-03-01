@@ -68,6 +68,7 @@ namespace VaultLite
             if (_passwordValidator != null && !_passwordValidator(password))
             {
                 ShowError("Incorrect password. Try again.");
+                txtPassword.Focus();
                 txtPassword.SelectAll();
                 return;
             }

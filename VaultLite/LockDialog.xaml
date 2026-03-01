@@ -24,10 +24,10 @@
 
         <!-- Password Input -->
         <Grid Grid.Row="1">
-            <TextBox x:Name="txtPassword" KeyDown="OnPasswordKeyDown"
-                     Height="40" Padding="15,0" FontSize="16"
-                     PasswordChar="•" BorderBrush="#DDDDDD" BorderThickness="1"
-                     Background="#FAFAFA"/>
+            <PasswordBox x:Name="txtPassword" KeyDown="OnPasswordKeyDown"
+                         Height="40" Padding="15,0" FontSize="16"
+                         BorderBrush="#DDDDDD" BorderThickness="1"
+                         Background="#FAFAFA"/>
             
             <TextBlock x:Name="lblError" Text="" Foreground="#E74C3C" 
                        HorizontalAlignment="Left" VerticalAlignment="Bottom"
