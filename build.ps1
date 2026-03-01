@@ -13,25 +13,28 @@ New-Item -ItemType Directory -Path "publish" -Force | Out-Null
 
 Write-Host "`nBuilding VaultLite..." -ForegroundColor Yellow
 
-# Build self-contained single-file executable for Windows
+# Build framework-dependent single-file executable (smaller size, requires .NET 8 runtime on target)
 dotnet publish -c Release `
     -r win-x64 `
-    --self-contained true `
+    --self-contained false `
     -p:PublishSingleFile=true `
-    -p:IncludeNativeLibrariesForSelfExtract=true `
     -o "publish"
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "`nBuild successful!" -ForegroundColor Green
     
-    # Copy README and data folder structure
-    Copy-Item "..\README.md" "publish\" -Force
+    # Copy README if exists
+    $readmePath = Join-Path (Get-Location) "..\README.md"
+    if (Test-Path $readmePath) {
+        Copy-Item $readmePath "publish\" -Force
+    }
     
     New-Item -ItemType Directory -Path "publish\data" -Force | Out-Null
     
     $exeSize = (Get-Item "publish\VaultLite.exe").Length / 1MB
     Write-Host "`nOutput: publish\VaultLite.exe ($([math]::Round($exeSize, 2)) MB)" -ForegroundColor Cyan
-    Write-Host "`nTo run: Copy the 'publish' folder anywhere and double-click VaultLite.exe`n" -ForegroundColor White
+    Write-Host "`nTo run: Copy the 'publish' folder anywhere and double-click VaultLite.exe" -ForegroundColor Cyan
+    Write-Host "Note: Target machine needs .NET 8 Desktop Runtime installed." -ForegroundColor Yellow
     
 } else {
     Write-Host "`nBuild failed!" -ForegroundColor Red
