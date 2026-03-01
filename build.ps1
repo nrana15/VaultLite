@@ -11,7 +11,7 @@ if (Test-Path "publish") {
 # Create publish directory
 New-Item -ItemType Directory -Path "publish" -Force | Out-Null
 
-Write-Host "`nBuilding VaultLite...`n" -ForegroundColor Yellow
+Write-Host "`nBuilding VaultLite..." -ForegroundColor Yellow
 
 # Build self-contained single-file executable for Windows
 dotnet publish -c Release `
@@ -19,11 +19,10 @@ dotnet publish -c Release `
     --self-contained true `
     -p:PublishSingleFile=true `
     -p:IncludeNativeLibrariesForSelfExtract=true `
-    -p:PublishReadyToRun=true `
     -o "publish"
 
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "`n✓ Build successful!" -ForegroundColor Green
+    Write-Host "`nBuild successful!" -ForegroundColor Green
     
     # Copy README and data folder structure
     Copy-Item "..\README.md" "publish\" -Force
@@ -35,6 +34,6 @@ if ($LASTEXITCODE -eq 0) {
     Write-Host "`nTo run: Copy the 'publish' folder anywhere and double-click VaultLite.exe`n" -ForegroundColor White
     
 } else {
-    Write-Host "`n✗ Build failed!" -ForegroundColor Red
+    Write-Host "`nBuild failed!" -ForegroundColor Red
     exit $LASTEXITCODE
 }
