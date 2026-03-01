@@ -20,62 +20,83 @@ namespace VaultLite
 
         public MainWindow()
         {
-            InitializeComponent();
-            
-            // Wire up button click events
-            btnNewNote.Click += OnNewNoteClick;
-            btnPin.Click += OnPinClicked;
-            btnArchive.Click += OnArchiveClicked;
-            btnDelete.Click += OnDeleteClicked;
-            
-            // Set data directory relative to executable
-            var appPath = AppDomain.CurrentDomain.BaseDirectory;
-            var dataPath = Path.Combine(appPath, "data");
-            var dbPath = Path.Combine(dataPath, "vault.db");
-
-            if (!Directory.Exists(dataPath))
-                Directory.CreateDirectory(dataPath);
-
-            // Check for encrypted database
-            bool encryptionEnabled = false;
-            
-            try
+            try 
             {
-                using var conn = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={dbPath}");
-                conn.Open();
+                Console.WriteLine("MainWindow constructor starting...");
                 
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = "SELECT COUNT(*) FROM notes WHERE is_encrypted = 1 LIMIT 1";
-                var result = cmd.ExecuteScalar();
+                InitializeComponent();
                 
-                if (result != null && Convert.ToInt32(result) > 0)
-                    encryptionEnabled = true;
+                // Wire up button click events
+                btnNewNote.Click += OnNewNoteClick;
+                btnPin.Click += OnPinClicked;
+                btnArchive.Click += OnArchiveClicked;
+                btnDelete.Click += OnDeleteClicked;
+                
+                Console.WriteLine("Component initialization complete");
+                
+                // Set data directory relative to executable
+                var appPath = AppDomain.CurrentDomain.BaseDirectory;
+                Console.WriteLine($"App path: {appPath}");
+                
+                var dataPath = Path.Combine(appPath, "data");
+                var dbPath = Path.Combine(dataPath, "vault.db");
+
+                if (!Directory.Exists(dataPath))
+                    Directory.CreateDirectory(dataPath);
+                    
+                Console.WriteLine($"Data directory ready at: {dataPath}");
+
+                // Check for encrypted database
+                bool encryptionEnabled = false;
+                
+                try
+                {
+                    using var conn = new Microsoft.Data.Sqlite.SqliteConnection($"Data Source={dbPath}");
+                    conn.Open();
+                    
+                    var cmd = conn.CreateCommand();
+                    cmd.CommandText = "SELECT COUNT(*) FROM notes WHERE is_encrypted = 1 LIMIT 1";
+                    var result = cmd.ExecuteScalar();
+                    
+                    if (result != null && Convert.ToInt32(result) > 0)
+                        encryptionEnabled = true;
+                        
+                    Console.WriteLine($"Encryption enabled: {encryptionEnabled}");
+                }
+                catch (Exception ex) 
+                {
+                    Console.WriteLine($"DB check exception (normal): {ex.Message}");
+                }
+
+                _db = new Database(dataPath, encryptionEnabled);
+                Console.WriteLine("Database initialized");
+
+                // If encryption is enabled and database exists, show lock dialog
+                if (encryptionEnabled && File.Exists(dbPath))
+                {
+                    var lockDialog = new LockDialog();
+                    
+                    lockDialog.SetValidation(_db.ValidatePassword);
+                    lockDialog.SetSuccessCallback(() => OnUnlockSuccessful());
+                    lockDialog.SetCancelCallback(() => CloseVault());
+
+                    // Show modal dialog
+                    bool? result = lockDialog.ShowDialog();
+                    
+                    if (result != true)
+                        return; // User cancelled, don't show main window
+                        
+                    Console.WriteLine("Password validated successfully");
+                }
+                
+                Console.WriteLine("Showing main window...");
+                this.Show();
             }
-            catch { /* No encrypted data found */ }
-
-            _db = new Database(dataPath, encryptionEnabled);
-
-            // If encryption is enabled and database exists, show lock dialog
-            if (encryptionEnabled && File.Exists(dbPath))
+            catch (Exception ex) 
             {
-                var lockDialog = new LockDialog();
-                
-                lockDialog.SetValidation(_db.ValidatePassword);
-                lockDialog.SetSuccessCallback(() => OnUnlockSuccessful());
-                lockDialog.SetCancelCallback(() => CloseVault());
-
-                // Show modal dialog
-                bool? result = lockDialog.ShowDialog();
-                
-                if (result != true)
-                    return; // User cancelled, don't show main window
+                Console.WriteLine($"FATAL ERROR in MainWindow: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
             }
-            
-            Console.WriteLine("Main window initialized successfully");
-            
-            // Load notes and tags
-            RefreshNotes();
-            UpdateTagsList();
         }
 
         private void OnUnlockSuccessful()
