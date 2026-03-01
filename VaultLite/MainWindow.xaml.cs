@@ -71,6 +71,8 @@ namespace VaultLite
                     return; // User cancelled, don't show main window
             }
             
+            Console.WriteLine("Main window initialized successfully");
+            
             // Load notes and tags
             RefreshNotes();
             UpdateTagsList();
