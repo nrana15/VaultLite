@@ -29,7 +29,13 @@ namespace VaultLite.Security
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(salt);
 
-            using var deriveBytes = new Rfc2898DeriveBytes(password, salt, Iterations);
+            // Use SHA256 explicitly for better security in .NET 10+
+            using var deriveBytes = new Rfc2898DeriveBytes(
+                password, 
+                salt, 
+                Iterations, 
+                HashAlgorithmName.SHA256);
+                
             byte[] key = deriveBytes.GetBytes(KeySize / 8);
             byte[] iv = deriveBytes.GetBytes(BlockSize / 8);
 
@@ -65,7 +71,13 @@ namespace VaultLite.Security
             byte[] salt = new byte[SaltSize];
             Buffer.BlockCopy(encryptedData, 0, salt, 0, SaltSize);
 
-            using var deriveBytes = new Rfc2898DeriveBytes(password, salt, Iterations);
+            // Use SHA256 explicitly for better security in .NET 10+
+            using var deriveBytes = new Rfc2898DeriveBytes(
+                password, 
+                salt, 
+                Iterations, 
+                HashAlgorithmName.SHA256);
+                
             byte[] key = deriveBytes.GetBytes(KeySize / 8);
             byte[] iv = deriveBytes.GetBytes(BlockSize / 8);
 

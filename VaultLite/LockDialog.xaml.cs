@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using System.Windows.Input;
 
 namespace VaultLite
 {
@@ -46,7 +47,7 @@ namespace VaultLite
             _onCancel = callback;
         }
 
-        private void OnPasswordKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnPasswordKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(txtPassword.Password))
             {
@@ -54,9 +55,9 @@ namespace VaultLite
             }
         }
 
-        private void OnUnlockClicked(object sender, RoutedEventArgs e)
+        private void OnUnlockClicked(object sender, RoutedEventArgs? e)
         {
-            string password = txtPassword.Password;
+            string? password = txtPassword.Password;
 
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -73,12 +74,12 @@ namespace VaultLite
                 return;
             }
 
-            MasterPassword = password;
+            MasterPassword = password!;
             DialogResult = true;
             Close();
         }
 
-        private void OnCancelClicked(object sender, RoutedEventArgs e)
+        private void OnCancelClicked(object sender, RoutedEventArgs? e)
         {
             if (_onCancel != null)
                 _onCancel.Invoke();

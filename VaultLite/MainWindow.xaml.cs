@@ -239,7 +239,7 @@ namespace VaultLite
         {
             // Hide watermark when user starts typing
             if (e.Key == Key.Back || e.Key == Key.Delete || 
-                (!System.Windows.Input.Keyboard.IsKeyLocked(Key.CapsLock) && e.Key >= Key.A && e.Key <= Key.Z) ||
+                (!Keyboard.IsKeyLocked(Key.CapsLock) && e.Key >= Key.A && e.Key <= Key.Z) ||
                 e.Key >= Key.D0 && e.Key <= Key.D9 || e.Key == Key.Space)
             {
                 lblTagsWatermark.Visibility = Visibility.Collapsed;
@@ -309,7 +309,7 @@ namespace VaultLite
 
         private static void SelectAll(TextBox box)
         {
-            box.SelectAll();
+            box?.SelectAll();
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

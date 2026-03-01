@@ -19,7 +19,7 @@
                 <TextBlock Text="TAGS" FontSize="12" FontWeight="Bold" 
                            Foreground="#666666" Margin="15,15,15,10"/>
                 
-                <TextBox x:Name="txtNewTag" KeyDown="OnNewTagKeyDown"
+                <TextBox x:Name="txtNewTag" 
                          Height="30" Margin="15,0,15,10"
                          Background="#FAFAFA" BorderBrush="#DDDDDD" BorderThickness="1"
                          FontSize="12"/>

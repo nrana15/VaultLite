@@ -27,15 +27,15 @@ namespace VaultLite.Data
             if (_encryptionEnabled)
                 InitializeWithEncryption();
             else
-                Initialize();
+                InitializeDatabase();
         }
 
         /// <summary>
         /// Validates master password during unlock.
         /// </summary>
-        public bool ValidatePassword(string password)
+        public bool ValidatePassword(string? password)
         {
-            if (!_encryptionEnabled || _masterPasswordHash == null)
+            if (!_encryptionEnabled || _masterPasswordHash == null || string.IsNullOrEmpty(password))
                 return false;
 
             var computedHash = ComputePasswordHash(password);
@@ -45,10 +45,10 @@ namespace VaultLite.Data
         /// <summary>
         /// Sets master password and stores hash for validation.
         /// </summary>
-        public void SetMasterPassword(string password)
+        public void SetMasterPassword(string? password)
         {
-            if (!_encryptionEnabled)
-                throw new InvalidOperationException("Encryption not enabled");
+            if (!_encryptionEnabled || string.IsNullOrEmpty(password))
+                throw new InvalidOperationException("Encryption not enabled or invalid password");
 
             EncryptionService.ValidatePasswordStrength(password);
             _masterPasswordHash = ComputePasswordHash(password);
@@ -90,7 +90,7 @@ namespace VaultLite.Data
             command.ExecuteNonQuery();
         }
 
-        private void Initialize()
+        private void InitializeDatabase()
         {
             using var connection = new SqliteConnection(_connectionString);
             connection.Open();
@@ -131,8 +131,8 @@ namespace VaultLite.Data
             
             string contentToSave;
             
-            if (_encryptionEnabled)
-                contentToSave = EncryptionService.Encrypt(note.Content, _masterPasswordHash!);
+            if (_encryptionEnabled && !string.IsNullOrEmpty(_masterPasswordHash))
+                contentToSave = EncryptionService.Encrypt(note.Content, _masterPasswordHash);
             else
                 contentToSave = note.Content;
 
@@ -234,7 +234,7 @@ namespace VaultLite.Data
             using var conn = GetConnection();
             using var cmd = conn.CreateCommand();
             
-            var sql = @"SELECT id, title, content, tags, is_pinned, is_archived, created_at, updated_at 
+            var sql = @"SELECT id, title, content_encrypted as content, tags, is_pinned, is_archived, created_at, updated_at 
                         FROM notes WHERE is_archived = @is_archived
                         ORDER BY is_pinned DESC, updated_at DESC";
             cmd.CommandText = sql;
@@ -243,16 +243,15 @@ namespace VaultLite.Data
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                string contentField = _encryptionEnabled ? reader.IsDBNull(2) || reader.GetString(2) == null 
+                string? contentField = reader.IsDBNull(2) || reader.GetString(2) == null 
                     ? string.Empty 
-                    : reader.GetString(2)! 
-                    : reader.GetString(1);
+                    : reader.GetString(2)!;
 
                 notes.Add(new Models.Note
                 {
                     Id = reader.GetInt32(0),
                     Title = reader.GetString(1),
-                    Content = GetDecryptedContent(_encryptionEnabled ? contentField : null),
+                    Content = GetDecryptedContent(_encryptionEnabled && _masterPasswordHash != null ? contentField : null),
                     Tags = ParseTags(reader.GetString(3)),
                     IsPinned = reader.GetBoolean(4),
                     IsArchived = reader.GetBoolean(5),
